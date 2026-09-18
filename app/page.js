@@ -61,7 +61,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <div className="mx-auto max-w-6xl px-4 sm:px-6 -mt-12 pb-16">
+      <div className="relative mx-auto max-w-6xl px-4 sm:px-6 -mt-12 pb-16">
         <div className="rounded-2xl bg-white p-4 sm:p-5 shadow-lg shadow-slate-900/5 ring-1 ring-slate-200">
           <div className="relative">
             <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
