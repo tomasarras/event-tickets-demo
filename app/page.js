@@ -8,8 +8,10 @@ import CategoryFilter from "@/components/CategoryFilter";
 import { EVENTS } from "@/lib/events";
 import { findVenue } from "@/lib/venues";
 import { randomDelay } from "@/lib/delay";
+import { useLanguage } from "@/components/LanguageProvider";
 
 export default function HomePage() {
+  const { t } = useLanguage();
   const [category, setCategory] = useState("all");
   const [query, setQuery] = useState("");
   const [loadingCatalog, setLoadingCatalog] = useState(true);
@@ -48,16 +50,10 @@ export default function HomePage() {
         <div className="relative mx-auto max-w-6xl px-4 sm:px-6 pt-16 pb-24 text-center text-white">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-xs font-medium">
             <Sparkles size={12} />
-            Proyecto demo de portfolio · datos ficticios
+            {t("home_badge")}
           </span>
-          <h1 className="mt-4 text-3xl sm:text-4xl font-bold tracking-tight">
-            Encontrá tu lugar
-          </h1>
-          <p className="mt-2 text-slate-300 max-w-xl mx-auto">
-            Butaca es un catálogo de eventos ficticio construido como pieza de portfolio:
-            recitales, teatro, deportes y conferencias inventados, sin backend ni pagos
-            reales.
-          </p>
+          <h1 className="mt-4 text-3xl sm:text-4xl font-bold tracking-tight">{t("home_title")}</h1>
+          <p className="mt-2 text-slate-300 max-w-xl mx-auto">{t("home_subtitle")}</p>
         </div>
       </section>
 
@@ -69,7 +65,7 @@ export default function HomePage() {
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Buscar por evento, venue o ciudad…"
+              placeholder={t("home_search_placeholder")}
               className="w-full rounded-lg border border-slate-200 py-2.5 pl-9 pr-3 text-sm focus:border-violet-500 focus:outline-none focus:ring-1 focus:ring-violet-500"
             />
           </div>
@@ -79,26 +75,22 @@ export default function HomePage() {
         </div>
 
         <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <InfoCard
-            icon={<Ticket size={18} />}
-            title="Entradas simuladas"
-            text="Campo general por cantidad, o asientos numerados por zona según el evento."
-          />
+          <InfoCard icon={<Ticket size={18} />} title={t("home_card1_title")} text={t("home_card1_text")} />
           <InfoCard
             icon={<ShieldCheck size={18} />}
-            title="Sin datos reales"
-            text="No se guarda información en ningún servidor: tus entradas quedan solo en tu navegador (localStorage)."
+            title={t("home_card2_title")}
+            text={t("home_card2_text")}
           />
           <InfoCard
             icon={<Sparkles size={18} />}
-            title="Eventos ficticios"
-            text="Aurora Wolves, Marea Sur y demás artistas son inventados para este demo — ninguno existe en la realidad."
+            title={t("home_card3_title")}
+            text={t("home_card3_text")}
           />
         </div>
 
         <div className="mt-12">
           <h2 className="text-lg font-semibold text-slate-900">
-            Próximos eventos
+            {t("home_upcoming_events")}
             {!loadingCatalog && (
               <span className="ml-2 text-sm font-normal text-slate-400">({events.length})</span>
             )}
@@ -111,7 +103,7 @@ export default function HomePage() {
             </div>
           ) : events.length === 0 ? (
             <p className="mt-4 rounded-xl border border-dashed border-slate-200 bg-white p-8 text-center text-sm text-slate-400">
-              No hay eventos que coincidan con la búsqueda.
+              {t("home_no_match")}
             </p>
           ) : (
             <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">

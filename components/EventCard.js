@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { MapPin, CalendarDays } from "lucide-react";
 import { CATEGORIES, eventMinPrice } from "@/lib/events";
@@ -5,8 +7,10 @@ import { findVenue } from "@/lib/venues";
 import { formatDateShort, formatPrice } from "@/lib/format";
 import { Skeleton } from "@/components/Skeleton";
 import EventImage from "@/components/EventImage";
+import { useLanguage } from "@/components/LanguageProvider";
 
 export default function EventCard({ event }) {
+  const { t, lang } = useLanguage();
   const venue = findVenue(event.venueId);
   const category = CATEGORIES[event.category];
 
@@ -23,7 +27,7 @@ export default function EventCard({ event }) {
       >
         <div className="flex h-full items-end p-4">
           <span className="rounded-full bg-white/20 px-2.5 py-1 text-xs font-semibold text-white backdrop-blur">
-            {category.label}
+            {t(`category_${event.category}`)}
           </span>
         </div>
       </EventImage>
@@ -37,10 +41,10 @@ export default function EventCard({ event }) {
         </p>
         <p className="mt-1 flex items-center gap-1.5 text-xs text-slate-500">
           <CalendarDays size={13} />
-          {formatDateShort(event.date)} · {event.time}
+          {formatDateShort(event.date, lang)} · {event.time}
         </p>
         <p className="mt-3 text-sm font-semibold text-slate-900">
-          Desde {formatPrice(eventMinPrice(event))}
+          {t("event_from_price", formatPrice(eventMinPrice(event), lang))}
         </p>
       </div>
     </Link>

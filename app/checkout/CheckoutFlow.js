@@ -6,20 +6,19 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Lock, ShieldAlert } from "lucide-react";
 import { findEvent } from "@/lib/events";
 import { findVenue } from "@/lib/venues";
-import { generateVenueSeats, ZONE_LABELS } from "@/lib/seatZones";
+import { generateVenueSeats } from "@/lib/seatZones";
 import { formatDateLong, formatPrice } from "@/lib/format";
 import { generateOrderRef, saveOrder } from "@/lib/ticketOrders";
 import { randomDelay } from "@/lib/delay";
 import StepIndicator from "@/components/StepIndicator";
 import BuyerForm from "@/components/BuyerForm";
-
-const STEPS = ["Comprador", "Pago"];
+import { useLanguage } from "@/components/LanguageProvider";
 
 function emptyBuyer() {
   return { firstName: "", lastName: "", document: "", email: "" };
 }
 
-function buildTickets(event, searchParams) {
+function buildTickets(event, searchParams, t) {
   if (event.seated) {
     const seats = (searchParams.get("seats") || "").split(",").filter(Boolean);
     const seatMap = generateVenueSeats(event.id);
@@ -27,7 +26,7 @@ function buildTickets(event, searchParams) {
       const seat = seatMap.find((s) => s.code === code);
       const zone = seat?.zone || "platea";
       return {
-        label: `Asiento ${code} · ${ZONE_LABELS[zone]}`,
+        label: t("seat_label", code, t(`zone_${zone}`)),
         price: event.zonePrices[zone],
       };
     });
@@ -37,7 +36,7 @@ function buildTickets(event, searchParams) {
   const tickets = [];
   tiersParam.split(",").forEach((part) => {
     const [tierId, qtyStr] = part.split(":");
-    const tier = event.tiers.find((t) => t.id === tierId);
+    const tier = event.tiers.find((tr) => tr.id === tierId);
     const qty = Number(qtyStr) || 0;
     if (!tier) return;
     for (let i = 0; i < qty; i++) {
@@ -50,25 +49,29 @@ function buildTickets(event, searchParams) {
 export default function CheckoutFlow() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { t, lang } = useLanguage();
   const eventId = searchParams.get("event");
   const event = eventId ? findEvent(eventId) : null;
 
-  const tickets = useMemo(() => (event ? buildTickets(event, searchParams) : []), [event, searchParams]);
-  const totalPrice = tickets.reduce((sum, t) => sum + t.price, 0);
+  const tickets = useMemo(
+    () => (event ? buildTickets(event, searchParams, t) : []),
+    [event, searchParams, t]
+  );
+  const totalPrice = tickets.reduce((sum, tk) => sum + tk.price, 0);
 
   const [step, setStep] = useState(1);
   const [buyer, setBuyer] = useState(emptyBuyer);
   const [payment, setPayment] = useState({ name: "", number: "", expiry: "", cvv: "" });
   const [acceptedTerms, setAcceptedTerms] = useState(false);
-  const [error, setError] = useState("");
+  const [errorKey, setErrorKey] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
   if (!event || tickets.length === 0) {
     return (
       <div className="mx-auto max-w-3xl px-4 sm:px-6 py-16 text-center text-slate-500">
-        No encontramos esa selección de entradas.{" "}
+        {t("event_not_found")}{" "}
         <Link href="/" className="text-violet-600 underline">
-          Volver al inicio
+          {t("common_back_to_home")}
         </Link>
       </div>
     );
@@ -78,10 +81,10 @@ export default function CheckoutFlow() {
 
   async function goToStep2() {
     if (!buyer.firstName || !buyer.lastName || !buyer.document || !buyer.email) {
-      setError("Completá todos los datos del comprador.");
+      setErrorKey("checkout_error_buyer_fields");
       return;
     }
-    setError("");
+    setErrorKey("");
     setSubmitting(true);
     await randomDelay();
     setSubmitting(false);
@@ -91,14 +94,14 @@ export default function CheckoutFlow() {
   async function confirmPurchase(e) {
     e.preventDefault();
     if (!payment.name || !payment.number || !payment.expiry || !payment.cvv) {
-      setError("Completá los datos de pago simulados.");
+      setErrorKey("checkout_error_payment");
       return;
     }
     if (!acceptedTerms) {
-      setError("Tenés que aceptar que esta es una compra simulada.");
+      setErrorKey("checkout_error_terms");
       return;
     }
-    setError("");
+    setErrorKey("");
     setSubmitting(true);
     await randomDelay();
 
@@ -122,21 +125,21 @@ export default function CheckoutFlow() {
 
   return (
     <div className="mx-auto max-w-5xl px-4 sm:px-6 py-8">
-      <StepIndicator steps={STEPS} current={step} />
+      <StepIndicator steps={[t("step_buyer"), t("step_pay")]} current={step} />
 
       <div className="mt-6 flex flex-col gap-6 lg:flex-row">
         <div className="flex-1 space-y-4">
           {step === 1 && (
             <div className="space-y-4">
               <BuyerForm value={buyer} onChange={setBuyer} />
-              {error && <p className="text-sm text-rose-600">{error}</p>}
+              {errorKey && <p className="text-sm text-rose-600">{t(errorKey)}</p>}
               <button
                 type="button"
                 onClick={goToStep2}
                 disabled={submitting}
                 className="w-full rounded-lg bg-violet-600 py-3 text-sm font-semibold text-white hover:bg-violet-700 disabled:cursor-not-allowed disabled:opacity-70 sm:w-auto sm:px-8"
               >
-                Continuar al pago
+                {t("checkout_continue_payment")}
               </button>
             </div>
           )}
@@ -145,15 +148,14 @@ export default function CheckoutFlow() {
             <form onSubmit={confirmPurchase} className="space-y-4">
               <div className="flex items-start gap-2 rounded-lg bg-amber-50 p-3 text-xs text-amber-700">
                 <ShieldAlert size={16} className="mt-0.5 shrink-0" />
-                Este es un pago simulado para una demo de portfolio. No ingreses datos reales
-                de tu tarjeta.
+                {t("payment_disclaimer")}
               </div>
 
               <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   <div className="sm:col-span-2">
                     <label className="block text-xs font-medium text-slate-500 mb-1">
-                      Nombre en la tarjeta
+                      {t("payment_card_name")}
                     </label>
                     <input
                       type="text"
@@ -164,7 +166,7 @@ export default function CheckoutFlow() {
                   </div>
                   <div className="sm:col-span-2">
                     <label className="block text-xs font-medium text-slate-500 mb-1">
-                      Número (simulado)
+                      {t("payment_card_number")}
                     </label>
                     <input
                       type="text"
@@ -177,7 +179,9 @@ export default function CheckoutFlow() {
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-slate-500 mb-1">Vencimiento</label>
+                    <label className="block text-xs font-medium text-slate-500 mb-1">
+                      {t("payment_expiry")}
+                    </label>
                     <input
                       type="text"
                       placeholder="MM/AA"
@@ -188,7 +192,7 @@ export default function CheckoutFlow() {
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-slate-500 mb-1">CVV</label>
+                    <label className="block text-xs font-medium text-slate-500 mb-1">{t("payment_cvv")}</label>
                     <input
                       type="text"
                       inputMode="numeric"
@@ -208,11 +212,10 @@ export default function CheckoutFlow() {
                   onChange={(e) => setAcceptedTerms(e.target.checked)}
                   className="mt-0.5 accent-violet-600"
                 />
-                Entiendo que esta es una compra de entradas simulada, sin validez real, creada
-                solo para una demo de portfolio.
+                {t("payment_terms")}
               </label>
 
-              {error && <p className="text-sm text-rose-600">{error}</p>}
+              {errorKey && <p className="text-sm text-rose-600">{t(errorKey)}</p>}
 
               <div className="flex gap-3">
                 <button
@@ -221,7 +224,7 @@ export default function CheckoutFlow() {
                   disabled={submitting}
                   className="rounded-lg border border-slate-200 px-6 py-3 text-sm font-semibold text-slate-600 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-70"
                 >
-                  Atrás
+                  {t("common_back_button")}
                 </button>
                 <button
                   type="submit"
@@ -229,7 +232,7 @@ export default function CheckoutFlow() {
                   className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-violet-600 py-3 text-sm font-semibold text-white hover:bg-violet-700 disabled:cursor-not-allowed disabled:opacity-70 sm:flex-none sm:px-8"
                 >
                   <Lock size={14} />
-                  {submitting ? "Confirmando…" : "Confirmar compra simulada"}
+                  {submitting ? t("event_confirming") : t("checkout_confirm")}
                 </button>
               </div>
             </form>
@@ -238,27 +241,29 @@ export default function CheckoutFlow() {
 
         <aside className="w-full shrink-0 space-y-4 lg:w-80">
           <div className="rounded-xl border border-slate-200 bg-white p-4">
-            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Resumen</p>
+            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide">
+              {t("summary_title")}
+            </p>
             <p className="mt-2 text-sm font-semibold text-slate-900">{event.title}</p>
             <p className="text-xs text-slate-500">
               {venue.name} · {venue.city}
             </p>
             <p className="text-xs text-slate-500">
-              {formatDateLong(event.date)} · {event.time}
+              {formatDateLong(event.date, lang)} · {event.time}
             </p>
 
             <div className="mt-3 space-y-1 border-t border-slate-100 pt-3 text-sm text-slate-600">
-              {tickets.map((t, idx) => (
+              {tickets.map((tk, idx) => (
                 <div key={idx} className="flex items-center justify-between">
-                  <span>{t.label}</span>
-                  <span className="font-medium text-slate-800">{formatPrice(t.price)}</span>
+                  <span>{tk.label}</span>
+                  <span className="font-medium text-slate-800">{formatPrice(tk.price, lang)}</span>
                 </div>
               ))}
             </div>
 
             <div className="mt-3 flex items-center justify-between border-t border-slate-100 pt-3">
-              <span className="text-sm font-medium text-slate-600">Total</span>
-              <span className="text-xl font-bold text-slate-900">{formatPrice(totalPrice)}</span>
+              <span className="text-sm font-medium text-slate-600">{t("summary_total")}</span>
+              <span className="text-xl font-bold text-slate-900">{formatPrice(totalPrice, lang)}</span>
             </div>
           </div>
         </aside>

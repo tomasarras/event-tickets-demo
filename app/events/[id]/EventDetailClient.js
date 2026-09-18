@@ -13,9 +13,11 @@ import TicketTierPicker from "@/components/TicketTierPicker";
 import SeatZoneMap from "@/components/SeatZoneMap";
 import EventImage from "@/components/EventImage";
 import { Skeleton } from "@/components/Skeleton";
+import { useLanguage } from "@/components/LanguageProvider";
 
 export default function EventDetailClient({ event }) {
   const router = useRouter();
+  const { t, lang } = useLanguage();
   const venue = findVenue(event.venueId);
   const category = CATEGORIES[event.category];
 
@@ -79,7 +81,7 @@ export default function EventDetailClient({ event }) {
         <div className="flex h-full items-end p-6">
           <div>
             <span className="rounded-full bg-white/20 px-2.5 py-1 text-xs font-semibold text-white backdrop-blur">
-              {category.label}
+              {t(`category_${event.category}`)}
             </span>
             <h1 className="mt-2 text-2xl font-bold text-white sm:text-3xl">{event.title}</h1>
           </div>
@@ -93,7 +95,7 @@ export default function EventDetailClient({ event }) {
         </span>
         <span className="flex items-center gap-1.5">
           <CalendarDays size={15} className="text-violet-600" />
-          {formatDateLong(event.date)}
+          {formatDateLong(event.date, lang)}
         </span>
         <span className="flex items-center gap-1.5">
           <Clock size={15} className="text-violet-600" />
@@ -105,7 +107,7 @@ export default function EventDetailClient({ event }) {
 
       <div className="mt-8">
         <h2 className="mb-3 text-sm font-semibold text-slate-900">
-          {event.seated ? "Elegí tus asientos" : "Elegí tus entradas"}
+          {event.seated ? t("event_choose_seats") : t("event_choose_tickets")}
         </h2>
         {loading ? (
           <TicketPickerSkeleton seated={event.seated} />
@@ -129,8 +131,8 @@ export default function EventDetailClient({ event }) {
         <div className="fixed inset-x-0 bottom-0 z-30 border-t border-slate-200 bg-white/95 backdrop-blur">
           <div className="mx-auto flex max-w-4xl items-center justify-between px-4 sm:px-6 py-3">
             <div className="text-sm text-slate-600">
-              {totalQty} entrada{totalQty > 1 ? "s" : ""} ·{" "}
-              <span className="text-lg font-bold text-slate-900">{formatPrice(totalPrice)}</span>
+              {t("event_ticket_count", totalQty)} ·{" "}
+              <span className="text-lg font-bold text-slate-900">{formatPrice(totalPrice, lang)}</span>
             </div>
             <button
               type="button"
@@ -139,7 +141,7 @@ export default function EventDetailClient({ event }) {
               className="flex items-center gap-1.5 rounded-lg bg-violet-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-violet-700 disabled:cursor-not-allowed disabled:opacity-70"
             >
               {continuing && <Loader2 size={14} className="animate-spin" />}
-              {continuing ? "Confirmando…" : "Continuar"}
+              {continuing ? t("event_confirming") : t("event_continue")}
             </button>
           </div>
         </div>

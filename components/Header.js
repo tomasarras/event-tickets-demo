@@ -1,7 +1,13 @@
+"use client";
+
 import Link from "next/link";
 import { Ticket } from "lucide-react";
+import { useLanguage } from "@/components/LanguageProvider";
+import LanguageToggle from "@/components/LanguageToggle";
 
 export default function Header() {
+  const { t } = useLanguage();
+
   return (
     <header className="border-b border-slate-200 bg-white/80 backdrop-blur sticky top-0 z-30">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 h-16 flex items-center justify-between">
@@ -13,11 +19,12 @@ export default function Header() {
         </Link>
         <nav className="flex items-center gap-5 text-sm font-medium text-slate-600">
           <Link href="/" className="hover:text-slate-900">
-            Eventos
+            {t("nav_events")}
           </Link>
           <Link href="/my-tickets" className="hover:text-slate-900">
-            Mis entradas
+            {t("nav_my_tickets")}
           </Link>
+          <LanguageToggle />
         </nav>
       </div>
     </header>

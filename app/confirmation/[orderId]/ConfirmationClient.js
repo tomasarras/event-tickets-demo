@@ -9,8 +9,10 @@ import { formatDateLong, formatPrice } from "@/lib/format";
 import { randomDelay } from "@/lib/delay";
 import QRTicket from "@/components/QRTicket";
 import { Skeleton } from "@/components/Skeleton";
+import { useLanguage } from "@/components/LanguageProvider";
 
 export default function ConfirmationClient({ orderId }) {
+  const { t, lang } = useLanguage();
   const [order, setOrder] = useState(undefined);
 
   useEffect(() => {
@@ -42,13 +44,10 @@ export default function ConfirmationClient({ orderId }) {
   if (!order) {
     return (
       <div className="mx-auto max-w-3xl px-4 sm:px-6 py-16 text-center text-slate-500">
-        <p>No encontramos esta compra en este navegador.</p>
-        <p className="mt-1 text-sm text-slate-400">
-          Las compras de esta demo se guardan solo localmente y no son visibles desde otro
-          dispositivo o navegador.
-        </p>
+        <p>{t("confirmation_not_found")}</p>
+        <p className="mt-1 text-sm text-slate-400">{t("confirmation_not_found_hint")}</p>
         <Link href="/" className="mt-4 inline-block text-violet-600 underline">
-          Volver al inicio
+          {t("common_back_to_home")}
         </Link>
       </div>
     );
@@ -62,9 +61,10 @@ export default function ConfirmationClient({ orderId }) {
         <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
           <CheckCircle2 size={28} />
         </span>
-        <h1 className="mt-4 text-2xl font-bold text-slate-900">Compra simulada confirmada</h1>
+        <h1 className="mt-4 text-2xl font-bold text-slate-900">{t("confirmation_title")}</h1>
         <p className="mt-1 text-slate-500">
-          Código de orden <span className="font-mono font-semibold text-slate-900">{order.id}</span>
+          {t("confirmation_order_code")}{" "}
+          <span className="font-mono font-semibold text-slate-900">{order.id}</span>
         </p>
       </div>
 
@@ -75,10 +75,11 @@ export default function ConfirmationClient({ orderId }) {
           {venue.name} · {venue.city}
         </p>
         <p className="text-xs text-slate-500">
-          {formatDateLong(order.event.date)} · {order.event.time}
+          {formatDateLong(order.event.date, lang)} · {order.event.time}
         </p>
         <p className="mt-2 text-xs text-slate-500">
-          {order.buyer.firstName} {order.buyer.lastName} · Doc. {order.buyer.document}
+          {order.buyer.firstName} {order.buyer.lastName} · {t("confirmation_document_short")}{" "}
+          {order.buyer.document}
         </p>
       </div>
 
@@ -91,16 +92,18 @@ export default function ConfirmationClient({ orderId }) {
             <QRTicket value={`BUTACA|${order.id}|${idx + 1}`} size={88} />
             <div className="flex-1">
               <p className="text-sm font-semibold text-slate-900">{ticket.label}</p>
-              <p className="text-xs text-slate-400">Entrada {idx + 1} de {order.tickets.length}</p>
+              <p className="text-xs text-slate-400">
+                {t("confirmation_ticket_of", idx + 1, order.tickets.length)}
+              </p>
             </div>
-            <p className="text-sm font-semibold text-slate-900">{formatPrice(ticket.price)}</p>
+            <p className="text-sm font-semibold text-slate-900">{formatPrice(ticket.price, lang)}</p>
           </div>
         ))}
       </div>
 
       <div className="mt-4 flex items-center justify-between rounded-xl border border-slate-200 bg-white p-5">
-        <span className="text-sm font-medium text-slate-600">Total pagado (simulado)</span>
-        <span className="text-xl font-bold text-slate-900">{formatPrice(order.totalPrice)}</span>
+        <span className="text-sm font-medium text-slate-600">{t("confirmation_total_paid")}</span>
+        <span className="text-xl font-bold text-slate-900">{formatPrice(order.totalPrice, lang)}</span>
       </div>
 
       <div className="mt-6 flex flex-col gap-3 sm:flex-row">
@@ -108,13 +111,13 @@ export default function ConfirmationClient({ orderId }) {
           href="/my-tickets"
           className="flex-1 rounded-lg bg-slate-900 py-3 text-center text-sm font-semibold text-white hover:bg-slate-800"
         >
-          Ver mis entradas
+          {t("confirmation_view_tickets")}
         </Link>
         <Link
           href="/"
           className="flex-1 rounded-lg border border-slate-200 py-3 text-center text-sm font-semibold text-slate-600 hover:bg-slate-50"
         >
-          Ver más eventos
+          {t("confirmation_more_events")}
         </Link>
       </div>
     </div>

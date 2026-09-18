@@ -1,9 +1,14 @@
 "use client";
 
 import { CATEGORIES } from "@/lib/events";
+import { useLanguage } from "@/components/LanguageProvider";
 
 export default function CategoryFilter({ value, onChange }) {
-  const options = [{ id: "all", label: "Todos" }, ...Object.entries(CATEGORIES).map(([id, c]) => ({ id, label: c.label }))];
+  const { t } = useLanguage();
+  const options = [
+    { id: "all", label: t("category_all") },
+    ...Object.keys(CATEGORIES).map((id) => ({ id, label: t(`category_${id}`) })),
+  ];
 
   return (
     <div className="flex flex-wrap gap-2">

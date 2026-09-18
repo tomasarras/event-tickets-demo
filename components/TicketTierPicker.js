@@ -2,8 +2,11 @@
 
 import { Minus, Plus } from "lucide-react";
 import { formatPrice } from "@/lib/format";
+import { useLanguage } from "@/components/LanguageProvider";
 
 export default function TicketTierPicker({ tiers, quantities, onChange, maxPerTier = 6 }) {
+  const { t, lang } = useLanguage();
+
   return (
     <div className="space-y-3">
       {tiers.map((tier) => {
@@ -15,7 +18,9 @@ export default function TicketTierPicker({ tiers, quantities, onChange, maxPerTi
           >
             <div>
               <p className="text-sm font-semibold text-slate-900">{tier.label}</p>
-              <p className="text-xs text-slate-500">{formatPrice(tier.price)} por entrada</p>
+              <p className="text-xs text-slate-500">
+                {formatPrice(tier.price, lang)} {t("tier_per_ticket")}
+              </p>
             </div>
             <div className="flex items-center gap-3">
               <button
@@ -23,7 +28,7 @@ export default function TicketTierPicker({ tiers, quantities, onChange, maxPerTi
                 onClick={() => onChange(tier.id, Math.max(0, qty - 1))}
                 disabled={qty <= 0}
                 className="rounded-md border border-slate-200 p-1.5 text-slate-500 hover:bg-slate-50 disabled:opacity-30"
-                aria-label={`Menos ${tier.label}`}
+                aria-label={t("tier_fewer", tier.label)}
               >
                 <Minus size={14} />
               </button>
@@ -33,7 +38,7 @@ export default function TicketTierPicker({ tiers, quantities, onChange, maxPerTi
                 onClick={() => onChange(tier.id, Math.min(maxPerTier, qty + 1))}
                 disabled={qty >= maxPerTier}
                 className="rounded-md border border-slate-200 p-1.5 text-slate-500 hover:bg-slate-50 disabled:opacity-30"
-                aria-label={`Más ${tier.label}`}
+                aria-label={t("tier_more", tier.label)}
               >
                 <Plus size={14} />
               </button>

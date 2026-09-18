@@ -1,16 +1,20 @@
 "use client";
 
+import { useLanguage } from "@/components/LanguageProvider";
+
 export default function BuyerForm({ value, onChange }) {
+  const { t } = useLanguage();
+
   function set(field, val) {
     onChange({ ...value, [field]: val });
   }
 
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
-      <p className="mb-3 text-sm font-semibold text-slate-900">Datos del comprador</p>
+      <p className="mb-3 text-sm font-semibold text-slate-900">{t("buyer_title")}</p>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div>
-          <label className="block text-xs font-medium text-slate-500 mb-1">Nombre</label>
+          <label className="block text-xs font-medium text-slate-500 mb-1">{t("buyer_first_name")}</label>
           <input
             type="text"
             required
@@ -20,7 +24,7 @@ export default function BuyerForm({ value, onChange }) {
           />
         </div>
         <div>
-          <label className="block text-xs font-medium text-slate-500 mb-1">Apellido</label>
+          <label className="block text-xs font-medium text-slate-500 mb-1">{t("buyer_last_name")}</label>
           <input
             type="text"
             required
@@ -30,7 +34,7 @@ export default function BuyerForm({ value, onChange }) {
           />
         </div>
         <div>
-          <label className="block text-xs font-medium text-slate-500 mb-1">Documento</label>
+          <label className="block text-xs font-medium text-slate-500 mb-1">{t("buyer_document")}</label>
           <input
             type="text"
             required
@@ -40,7 +44,7 @@ export default function BuyerForm({ value, onChange }) {
           />
         </div>
         <div>
-          <label className="block text-xs font-medium text-slate-500 mb-1">Email</label>
+          <label className="block text-xs font-medium text-slate-500 mb-1">{t("buyer_email")}</label>
           <input
             type="email"
             required
