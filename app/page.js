@@ -1,0 +1,114 @@
+"use client";
+
+import { useMemo, useState } from "react";
+import { Search, ShieldCheck, Sparkles, Ticket } from "lucide-react";
+import EventCard from "@/components/EventCard";
+import CategoryFilter from "@/components/CategoryFilter";
+import { EVENTS } from "@/lib/events";
+import { findVenue } from "@/lib/venues";
+
+export default function HomePage() {
+  const [category, setCategory] = useState("all");
+  const [query, setQuery] = useState("");
+
+  const events = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return EVENTS.filter((e) => {
+      if (category !== "all" && e.category !== category) return false;
+      if (!q) return true;
+      const venue = findVenue(e.venueId);
+      return (
+        e.title.toLowerCase().includes(q) ||
+        venue.name.toLowerCase().includes(q) ||
+        venue.city.toLowerCase().includes(q)
+      );
+    }).sort((a, b) => a.date.localeCompare(b.date));
+  }, [category, query]);
+
+  return (
+    <div>
+      <section className="bg-gradient-to-b from-violet-600 to-violet-700">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 pt-14 pb-20 text-center text-white">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-xs font-medium">
+            <Sparkles size={12} />
+            Proyecto demo de portfolio · datos ficticios
+          </span>
+          <h1 className="mt-4 text-3xl sm:text-4xl font-bold tracking-tight">
+            Encontrá tu lugar
+          </h1>
+          <p className="mt-2 text-violet-100 max-w-xl mx-auto">
+            Butaca es un catálogo de eventos ficticio construido como pieza de portfolio:
+            recitales, teatro, deportes y conferencias inventados, sin backend ni pagos
+            reales.
+          </p>
+        </div>
+      </section>
+
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 -mt-10 pb-16">
+        <div className="rounded-2xl bg-white p-4 sm:p-5 shadow-lg shadow-slate-900/5 ring-1 ring-slate-200">
+          <div className="relative">
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Buscar por evento, venue o ciudad…"
+              className="w-full rounded-lg border border-slate-200 py-2.5 pl-9 pr-3 text-sm focus:border-violet-500 focus:outline-none focus:ring-1 focus:ring-violet-500"
+            />
+          </div>
+          <div className="mt-3">
+            <CategoryFilter value={category} onChange={setCategory} />
+          </div>
+        </div>
+
+        <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <InfoCard
+            icon={<Ticket size={18} />}
+            title="Entradas simuladas"
+            text="Campo general por cantidad, o asientos numerados por zona según el evento."
+          />
+          <InfoCard
+            icon={<ShieldCheck size={18} />}
+            title="Sin datos reales"
+            text="No se guarda información en ningún servidor: tus entradas quedan solo en tu navegador (localStorage)."
+          />
+          <InfoCard
+            icon={<Sparkles size={18} />}
+            title="Eventos ficticios"
+            text="Aurora Wolves, Marea Sur y demás artistas son inventados para este demo — ninguno existe en la realidad."
+          />
+        </div>
+
+        <div className="mt-12">
+          <h2 className="text-lg font-semibold text-slate-900">
+            Próximos eventos
+            <span className="ml-2 text-sm font-normal text-slate-400">({events.length})</span>
+          </h2>
+          {events.length === 0 ? (
+            <p className="mt-4 rounded-xl border border-dashed border-slate-200 bg-white p-8 text-center text-sm text-slate-400">
+              No hay eventos que coincidan con la búsqueda.
+            </p>
+          ) : (
+            <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {events.map((event) => (
+                <EventCard key={event.id} event={event} />
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function InfoCard({ icon, title, text }) {
+  return (
+    <div className="rounded-xl border border-slate-200 bg-white p-4">
+      <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-violet-50 text-violet-600">
+        {icon}
+      </span>
+      <p className="mt-3 text-sm font-semibold text-slate-900">{title}</p>
+      <p className="mt-1 text-sm text-slate-500">{text}</p>
+    </div>
+  );
+}
