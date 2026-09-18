@@ -35,6 +35,12 @@ branding or data.
   ever leaves the browser.
 - `components/QRTicket.js` — renders a real QR code per ticket using
   `qrcode`, purely client-side.
+- `components/EventImage.js` — shows a real photo when one exists at
+  `public/images/events/<event-id>.jpg` (or `public/images/hero.jpg` for the
+  homepage banner), and falls back to the category color gradient otherwise.
+  Drop a generated image in with the right filename and it's picked up
+  automatically, no code changes needed. See `prompts.txt` for ready-to-use
+  AI image-generation prompts (two style variants per event, plus the hero).
 
 ## Running locally
 

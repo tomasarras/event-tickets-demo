@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { CalendarDays, Clock, Loader2, MapPin } from "lucide-react";
 import { CATEGORIES } from "@/lib/events";
@@ -11,6 +11,8 @@ import { randomDelay } from "@/lib/delay";
 import BackButton from "@/components/BackButton";
 import TicketTierPicker from "@/components/TicketTierPicker";
 import SeatZoneMap from "@/components/SeatZoneMap";
+import EventImage from "@/components/EventImage";
+import { Skeleton } from "@/components/Skeleton";
 
 export default function EventDetailClient({ event }) {
   const router = useRouter();
@@ -20,6 +22,12 @@ export default function EventDetailClient({ event }) {
   const [quantities, setQuantities] = useState({});
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [continuing, setContinuing] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulated "fetch" of event details/availability.
+    randomDelay(900, 300).then(() => setLoading(false));
+  }, []);
 
   const seats = useMemo(() => (event.seated ? generateVenueSeats(event.id) : []), [event]);
 
@@ -62,17 +70,21 @@ export default function EventDetailClient({ event }) {
     <div className="mx-auto max-w-4xl px-4 sm:px-6 py-8 pb-28">
       <BackButton />
 
-      <div
-        className="mt-4 flex h-40 items-end rounded-2xl p-6"
-        style={{ background: `linear-gradient(135deg, ${category.color}, ${category.color}cc)` }}
+      <EventImage
+        src={`/images/events/${event.id}.jpg`}
+        alt={event.title}
+        categoryColor={category.color}
+        className="relative mt-4 h-40 overflow-hidden rounded-2xl"
       >
-        <div>
-          <span className="rounded-full bg-white/20 px-2.5 py-1 text-xs font-semibold text-white backdrop-blur">
-            {category.label}
-          </span>
-          <h1 className="mt-2 text-2xl font-bold text-white sm:text-3xl">{event.title}</h1>
+        <div className="flex h-full items-end p-6">
+          <div>
+            <span className="rounded-full bg-white/20 px-2.5 py-1 text-xs font-semibold text-white backdrop-blur">
+              {category.label}
+            </span>
+            <h1 className="mt-2 text-2xl font-bold text-white sm:text-3xl">{event.title}</h1>
+          </div>
         </div>
-      </div>
+      </EventImage>
 
       <div className="mt-4 flex flex-wrap gap-4 text-sm text-slate-600">
         <span className="flex items-center gap-1.5">
@@ -95,7 +107,9 @@ export default function EventDetailClient({ event }) {
         <h2 className="mb-3 text-sm font-semibold text-slate-900">
           {event.seated ? "Elegí tus asientos" : "Elegí tus entradas"}
         </h2>
-        {event.seated ? (
+        {loading ? (
+          <TicketPickerSkeleton seated={event.seated} />
+        ) : event.seated ? (
           <SeatZoneMap
             seats={seats}
             zonePrices={event.zonePrices}
@@ -111,7 +125,7 @@ export default function EventDetailClient({ event }) {
         )}
       </div>
 
-      {totalQty > 0 && (
+      {!loading && totalQty > 0 && (
         <div className="fixed inset-x-0 bottom-0 z-30 border-t border-slate-200 bg-white/95 backdrop-blur">
           <div className="mx-auto flex max-w-4xl items-center justify-between px-4 sm:px-6 py-3">
             <div className="text-sm text-slate-600">
@@ -130,6 +144,29 @@ export default function EventDetailClient({ event }) {
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+function TicketPickerSkeleton({ seated }) {
+  if (seated) {
+    return (
+      <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-6">
+        <Skeleton className="mb-4 h-4 w-64" />
+        <Skeleton className="mb-4 h-8 w-full rounded-md" />
+        <div className="mx-auto max-w-md space-y-1.5">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <Skeleton key={i} className="mx-auto h-5 w-64" />
+          ))}
+        </div>
+      </div>
+    );
+  }
+  return (
+    <div className="space-y-3">
+      {Array.from({ length: 2 }).map((_, i) => (
+        <Skeleton key={i} className="h-16 w-full rounded-xl" />
+      ))}
     </div>
   );
 }

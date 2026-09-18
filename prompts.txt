@@ -1,0 +1,71 @@
+Prompts para generar las imágenes de Butaca con otra IA (ej. Gemini "nano banana" / Imagen).
+
+Cómo usar:
+1. Copiá el texto de cada "description=" en la IA de imágenes que uses.
+2. Generá en formato panorámico / horizontal (ideal 16:9, mínimo 1200x500px aprox), sin texto ni logos en la imagen.
+3. Guardá el archivo resultante con el nombre indicado entre corchetes al lado de cada "title=" y ponelo en:
+   - Eventos → public/images/events/<id-del-evento>.jpg
+   - Portada → public/images/hero.jpg
+4. No hace falta tocar código: si el archivo existe se usa automáticamente, si no, se ve el degradé de color de la categoría (ya funciona así ahora).
+
+---
+
+title=Aurora Wolves - Gira 2026 [aurora-wolves-estadio-sur.jpg] (v1)
+description=Wide cinematic photo of an empty outdoor stadium rock concert stage at night, dramatic purple and magenta stage lighting beams, haze in the air, silhouette of a large crowd with raised hands in the foreground, no visible faces, no text, no logos, no band members, 16:9 landscape, moody atmospheric concert photography style.
+
+title=Aurora Wolves - Gira 2026 [aurora-wolves-estadio-sur.jpg] (v2)
+description=Abstract flat vector illustration poster background of a rock concert, bold violet and deep purple color palette, dynamic light beams crossing a stadium silhouette, minimalist crowd silhouette at the bottom, no text, no people close-up, no logos, wide 16:9 banner composition.
+
+title=Marea Sur - Unplugged [marea-sur-unplugged.jpg] (v1)
+description=Wide cinematic photo of an intimate empty theater stage set up for an acoustic concert, a single wooden stool and a warm spotlight, soft amber and gold lighting, red velvet curtains softly out of focus in the background, no people, no text, no logos, 16:9 landscape, warm intimate mood.
+
+title=Marea Sur - Unplugged [marea-sur-unplugged.jpg] (v2)
+description=Minimalist flat illustration of an intimate acoustic stage, warm amber spotlight cone, subtle stage curtain silhouette, cozy theater atmosphere, muted gold and brown tones, no text, no people, wide 16:9 banner.
+
+title=Neon Static - Synth Tour [neon-static-tour.jpg] (v1)
+description=Wide cinematic photo of a futuristic electronic music stage with neon laser lights, cyan and magenta synthwave lighting, fog machine haze, geometric LED stage design, silhouette of a crowd in the foreground with no visible faces, no text, no logos, 16:9 landscape.
+
+title=Neon Static - Synth Tour [neon-static-tour.jpg] (v2)
+description=Abstract synthwave style illustration, glowing neon grid horizon, magenta and electric blue gradient sky, retro-futuristic concert stage silhouette, no text, no people close-up, wide 16:9 banner composition.
+
+title=Río Abierto - Últimas Luces [rio-abierto-ultimas-luces.jpg] (v1)
+description=Wide cinematic photo of a minimalist theater stage with a single dramatic spotlight on an empty wooden chair, dark background, warm amber light, dust particles visible in the light beam, no people, no text, no logos, 16:9 landscape, moody theatrical atmosphere.
+
+title=Río Abierto - Últimas Luces [rio-abierto-ultimas-luces.jpg] (v2)
+description=Flat minimalist illustration of a theater stage, single warm spotlight cone on empty dark stage floor, deep charcoal background, subtle amber accent color, no text, no people, wide 16:9 banner.
+
+title=Vórtice FC vs. Atlético Aurora [vortice-vs-atletico-aurora.jpg] (v1)
+description=Wide cinematic photo of an empty soccer stadium at night under bright floodlights, green pitch, silhouette of stadium seating in the background, no visible team logos or crests, no text, no real team branding, 16:9 landscape, dramatic sports photography lighting.
+
+title=Vórtice FC vs. Atlético Aurora [vortice-vs-atletico-aurora.jpg] (v2)
+description=Flat vector illustration of a stylized soccer stadium at night, emerald green pitch, bright stadium floodlight beams, minimalist crowd silhouette in the stands, no logos, no text, no real team branding, wide 16:9 banner.
+
+title=Diego Ramal - En Vivo [diego-ramal-en-vivo.jpg] (v1)
+description=Wide cinematic photo of a small intimate comedy club stage, a single standing microphone under a warm red and pink spotlight, brick wall background slightly out of focus, no people, no text, no logos, 16:9 landscape, cozy nightlife atmosphere.
+
+title=Diego Ramal - En Vivo [diego-ramal-en-vivo.jpg] (v2)
+description=Minimalist flat illustration of a comedy club stage, single microphone silhouette under a rose-colored spotlight cone, dark brick wall texture background, no text, no people, wide 16:9 banner.
+
+title=Congreso LatinTech 2026 [congreso-latintech-2026.jpg] (v1)
+description=Wide cinematic photo of a modern empty conference auditorium with rows of seats facing a large blank screen, cool blue ambient lighting, sleek contemporary architecture, no people, no text, no logos, 16:9 landscape, professional tech-conference atmosphere.
+
+title=Congreso LatinTech 2026 [congreso-latintech-2026.jpg] (v2)
+description=Abstract flat illustration representing a technology conference, geometric blue and cyan shapes suggesting circuit patterns and data flow, minimalist auditorium silhouette, no text, no logos, no people, wide 16:9 banner.
+
+title=Festival Marea - Edición Lago [festival-marea-lago.jpg] (v1)
+description=Wide cinematic photo of an open-air lakeside music festival at dusk, string lights and warm bokeh lights, silhouette of a crowd near a calm lake, golden and violet sunset sky, no visible faces, no text, no logos, 16:9 landscape.
+
+title=Festival Marea - Edición Lago [festival-marea-lago.jpg] (v2)
+description=Flat illustration of a lakeside festival at dusk, warm gold and violet gradient sky reflected on water, minimalist silhouette of trees and a small stage in the distance, string lights, no text, no people close-up, wide 16:9 banner.
+
+title=Noche de Improvisación [noche-de-improvisacion.jpg] (v1)
+description=Wide cinematic photo of a cozy small cafe-theater stage, a few empty mismatched chairs, warm intimate lighting in amber and soft orange tones, exposed brick or wood interior, no people, no text, no logos, 16:9 landscape.
+
+title=Noche de Improvisación [noche-de-improvisacion.jpg] (v2)
+description=Minimalist flat illustration of a small cafe-theater stage, warm amber spotlight, a couple of simple chair silhouettes, cozy intimate color palette, no text, no people, wide 16:9 banner.
+
+title=Portada / Hero de Butaca [hero.jpg] (v1)
+description=Wide cinematic photo, abstract concert atmosphere seen from behind a large crowd silhouette (no visible faces, no individual people recognizable), multiple colorful stage spotlight beams (violet, magenta, blue) cutting through haze against a dark night sky, sense of energy and anticipation, no text, no logos, no readable signage, 16:9 ultra-wide banner composition, very dark edges for text overlay readability.
+
+title=Portada / Hero de Butaca [hero.jpg] (v2)
+description=Abstract dark background illustration for a live-events website hero banner, deep near-black background with a glowing violet and magenta radial spotlight glow at the top center, subtle scattered ticket-stub confetti shapes, faint crowd silhouette near the bottom edge, no text, no logos, no real people, cinematic and elegant, wide 16:9 banner, darker toward the edges so white text can overlay on top.

@@ -6,20 +6,37 @@ import { CheckCircle2, MapPin } from "lucide-react";
 import { getOrder } from "@/lib/ticketOrders";
 import { findVenue } from "@/lib/venues";
 import { formatDateLong, formatPrice } from "@/lib/format";
+import { randomDelay } from "@/lib/delay";
 import QRTicket from "@/components/QRTicket";
+import { Skeleton } from "@/components/Skeleton";
 
 export default function ConfirmationClient({ orderId }) {
   const [order, setOrder] = useState(undefined);
 
   useEffect(() => {
     // Orders only exist in this browser's localStorage, so they can only
-    // be read after mount (hydration-safe: SSR has no access to it).
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setOrder(getOrder(orderId));
+    // be read after mount (hydration-safe: SSR has no access to it). The
+    // delay simulates fetching/verifying the order from a server.
+    randomDelay(900, 400).then(() => {
+      setOrder(getOrder(orderId));
+    });
   }, [orderId]);
 
   if (order === undefined) {
-    return <div className="mx-auto max-w-3xl px-4 sm:px-6 py-16 text-center text-slate-400">Cargando…</div>;
+    return (
+      <div className="mx-auto max-w-3xl px-4 sm:px-6 py-10">
+        <div className="text-center">
+          <Skeleton className="mx-auto h-14 w-14 rounded-full" />
+          <Skeleton className="mx-auto mt-4 h-7 w-64" />
+          <Skeleton className="mx-auto mt-2 h-4 w-40" />
+        </div>
+        <Skeleton className="mt-8 h-24 w-full rounded-xl" />
+        <div className="mt-4 space-y-3">
+          <Skeleton className="h-20 w-full rounded-xl" />
+          <Skeleton className="h-20 w-full rounded-xl" />
+        </div>
+      </div>
+    );
   }
 
   if (!order) {

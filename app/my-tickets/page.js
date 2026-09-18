@@ -6,15 +6,19 @@ import { CalendarDays, Ticket } from "lucide-react";
 import { getAllOrders } from "@/lib/ticketOrders";
 import { findVenue } from "@/lib/venues";
 import { formatDateLong, formatPrice } from "@/lib/format";
+import { randomDelay } from "@/lib/delay";
+import { Skeleton } from "@/components/Skeleton";
 
 export default function MyTicketsPage() {
   const [orders, setOrders] = useState(null);
 
   useEffect(() => {
     // Orders only exist in this browser's localStorage, so they can only
-    // be read after mount (hydration-safe: SSR has no access to it).
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setOrders(getAllOrders());
+    // be read after mount (hydration-safe: SSR has no access to it). The
+    // delay simulates fetching the order history from a server.
+    randomDelay(900, 400).then(() => {
+      setOrders(getAllOrders());
+    });
   }, []);
 
   return (
@@ -24,7 +28,13 @@ export default function MyTicketsPage() {
         Guardadas solo en este navegador — es una demo sin backend ni base de datos.
       </p>
 
-      {orders === null ? null : orders.length === 0 ? (
+      {orders === null ? (
+        <div className="mt-6 space-y-3">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <Skeleton key={i} className="h-20 w-full rounded-xl" />
+          ))}
+        </div>
+      ) : orders.length === 0 ? (
         <div className="mt-8 rounded-xl border border-dashed border-slate-200 bg-white p-10 text-center">
           <Ticket className="mx-auto text-slate-300" size={32} />
           <p className="mt-3 text-slate-500">Todavía no compraste ninguna entrada.</p>

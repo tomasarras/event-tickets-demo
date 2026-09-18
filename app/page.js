@@ -1,15 +1,23 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Search, ShieldCheck, Sparkles, Ticket } from "lucide-react";
-import EventCard from "@/components/EventCard";
+import EventCard, { EventCardSkeleton } from "@/components/EventCard";
+import EventImage from "@/components/EventImage";
 import CategoryFilter from "@/components/CategoryFilter";
 import { EVENTS } from "@/lib/events";
 import { findVenue } from "@/lib/venues";
+import { randomDelay } from "@/lib/delay";
 
 export default function HomePage() {
   const [category, setCategory] = useState("all");
   const [query, setQuery] = useState("");
+  const [loadingCatalog, setLoadingCatalog] = useState(true);
+
+  useEffect(() => {
+    // Simulated "fetch" so the catalog doesn't feel like a static fixture.
+    randomDelay(1100, 400).then(() => setLoadingCatalog(false));
+  }, []);
 
   const events = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -27,8 +35,17 @@ export default function HomePage() {
 
   return (
     <div>
-      <section className="bg-gradient-to-b from-violet-600 to-violet-700">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6 pt-14 pb-20 text-center text-white">
+      <section className="relative overflow-hidden bg-slate-950">
+        <EventImage
+          src="/images/hero.jpg"
+          categoryColor="#3b0764"
+          overlay={false}
+          className="absolute inset-0"
+        />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(139,92,246,0.35),_transparent_60%)]" />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/70 to-slate-950/20" />
+
+        <div className="relative mx-auto max-w-6xl px-4 sm:px-6 pt-16 pb-24 text-center text-white">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-xs font-medium">
             <Sparkles size={12} />
             Proyecto demo de portfolio · datos ficticios
@@ -36,7 +53,7 @@ export default function HomePage() {
           <h1 className="mt-4 text-3xl sm:text-4xl font-bold tracking-tight">
             Encontrá tu lugar
           </h1>
-          <p className="mt-2 text-violet-100 max-w-xl mx-auto">
+          <p className="mt-2 text-slate-300 max-w-xl mx-auto">
             Butaca es un catálogo de eventos ficticio construido como pieza de portfolio:
             recitales, teatro, deportes y conferencias inventados, sin backend ni pagos
             reales.
@@ -44,7 +61,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <div className="mx-auto max-w-6xl px-4 sm:px-6 -mt-10 pb-16">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 -mt-12 pb-16">
         <div className="rounded-2xl bg-white p-4 sm:p-5 shadow-lg shadow-slate-900/5 ring-1 ring-slate-200">
           <div className="relative">
             <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -82,9 +99,17 @@ export default function HomePage() {
         <div className="mt-12">
           <h2 className="text-lg font-semibold text-slate-900">
             Próximos eventos
-            <span className="ml-2 text-sm font-normal text-slate-400">({events.length})</span>
+            {!loadingCatalog && (
+              <span className="ml-2 text-sm font-normal text-slate-400">({events.length})</span>
+            )}
           </h2>
-          {events.length === 0 ? (
+          {loadingCatalog ? (
+            <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <EventCardSkeleton key={i} />
+              ))}
+            </div>
+          ) : events.length === 0 ? (
             <p className="mt-4 rounded-xl border border-dashed border-slate-200 bg-white p-8 text-center text-sm text-slate-400">
               No hay eventos que coincidan con la búsqueda.
             </p>
